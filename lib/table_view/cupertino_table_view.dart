@@ -73,13 +73,19 @@ class _CupertinoTableViewState extends State<CupertinoTableView> {
   Widget build(BuildContext context) {
     ListView list = _buildList();
     List<Widget> slivers = List.from(list.buildSlivers(context));
-    slivers.insert(0, SliverToBoxAdapter(child: _buildTableHeaderView(context)));
+    slivers.insert(
+        0, SliverToBoxAdapter(child: _buildTableHeaderView(context)));
     if (!enableRefresh) {
       return Container(
         color: widget.backgroundColor,
         margin: widget.margin,
         padding: widget.padding,
-        child: list,
+        child: CustomScrollView(
+          key: widget.key,
+          physics: widget.physics,
+          controller: _effectiveScrollController,
+          slivers: slivers,
+        ),
       );
     }
 
@@ -176,9 +182,8 @@ class _CupertinoTableViewState extends State<CupertinoTableView> {
     );
   }
 
-Widget _buildTableHeaderView(BuildContext context) {
-    return widget.delegate.tableHeaderView?.call(context) ??
-        const SizedBox();
+  Widget _buildTableHeaderView(BuildContext context) {
+    return widget.delegate.tableHeaderView?.call(context) ?? const SizedBox();
   }
 
   /// 构建section header
